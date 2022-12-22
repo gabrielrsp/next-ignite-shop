@@ -1,28 +1,30 @@
 //everything here is rendered on the root path (index is always homepage)
 
-import { styled } from "../styles"
-
-const Button = styled('button', {
-  backgroundColor: "$rocketseat",
-  borderRadius: 4,  //type number, it will be in px by default
-  border: 0,
-  padding: "4px 8px",
-
-  span: {  //nested styled tag
-    fontWeight: "bold"
-  },
-
-  '&:hover': {
-    filter: 'brightness(0.8)'
-  }
-})
+import { HomeContainer, Product } from "../styles/pages/home";
+import shirtImg from '../assets/shirt.png'
+import Image from 'next/image'
 
 export default function Home() {
   return (
     <>
-      <Button>
-        <span>Enviar</span>
-      </Button>
+      <HomeContainer>
+        <Product>
+          <Image src={shirtImg} alt="" width={520} height={480} />
+          <footer>
+            <strong>Camiseta X</strong>
+            <span>R$ 79,90</span>
+          </footer>
+        </Product>
+
+        <Product>
+          <Image src={shirtImg} alt="" width={520} height={480} />
+          <footer>
+            <strong>Camiseta X</strong>
+            <span>R$ 79,90</span>
+          </footer>
+        </Product>
+
+      </HomeContainer>
     </>
   )
 }

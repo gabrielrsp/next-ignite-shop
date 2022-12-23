@@ -3,12 +3,24 @@
 import { HomeContainer, Product } from "../styles/pages/home";
 import shirtImg from '../assets/shirt.png'
 import Image from 'next/image'
+import { useKeenSlider } from 'keen-slider/react'
+import 'keen-slider/keen-slider.min.css'
+
+// useRef permite ter acesso à referência direta de um elemento na dom
 
 export default function Home() {
+
+  const [sliderRef] = useKeenSlider({
+    slides: {
+      perView: 3,
+      spacing: 48
+    }
+  })
+
   return (
     <>
-      <HomeContainer>
-        <Product>
+      <HomeContainer ref={sliderRef} className="keen-slider" >
+        <Product className="keen-slider__slide">
           <Image src={shirtImg} alt="" width={520} height={480} />
           <footer>
             <strong>Camiseta X</strong>
@@ -16,7 +28,23 @@ export default function Home() {
           </footer>
         </Product>
 
-        <Product>
+        <Product className="keen-slider__slide">
+          <Image src={shirtImg} alt="" width={520} height={480} />
+          <footer>
+            <strong>Camiseta X</strong>
+            <span>R$ 79,90</span>
+          </footer>
+        </Product>
+
+        <Product className="keen-slider__slide">
+          <Image src={shirtImg} alt="" width={520} height={480} />
+          <footer>
+            <strong>Camiseta X</strong>
+            <span>R$ 79,90</span>
+          </footer>
+        </Product>
+
+        <Product className="keen-slider__slide">
           <Image src={shirtImg} alt="" width={520} height={480} />
           <footer>
             <strong>Camiseta X</strong>

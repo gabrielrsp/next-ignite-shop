@@ -1,12 +1,11 @@
 //everything here is rendered on the root path (index is always homepage)
 
 import { HomeContainer, Product } from "../styles/pages/home";
-import shirtImg from '../assets/shirt.png'
 import Image from 'next/image'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import { stripe } from "../lib/stripe";
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import Stripe from "stripe";
 
 // useRef permite ter acesso à referência direta de um elemento na dom
@@ -50,7 +49,23 @@ export default function Home({products}: HomeProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async() => {
+
+/* 
+  o getStaticProps trabalha com cache, só é executado quando é feito o build da aplicação
+  - Ao gerar o build, o next percorre por todas a paginas identificado a que possuem esse metodo staticProps
+  e gera uma versão statica delas
+  - Só funciona em produção (rodando npm run build e depois npm run start)
+
+  - podemos definir um prazo pra revalidação do cache com o revalidate
+
+  - ATENÇÃO: ao usar getStaticProps, não temos acesso ao contexto da requisição (req, res, props)
+  que são fornecidas no getServerSideProps via desestruturação,
+  
+  - Até porque páginas estáticas devem ser IGUAIS pra todos os usuários que irão acessá-la
+
+  - Se forem informações dinâmicas, pessoais de um usuario, já é preciso do serverSideProps
+*/
+export const getStaticProps: GetStaticProps = async() => {
   const response = await stripe.products.list({
     expand: ['data.default_price']
   })
@@ -63,14 +78,18 @@ export const getServerSideProps: GetServerSideProps = async() => {
       id: product.id,
       name: product.name,
       imageUrl: product.images[0],
-      price: price.unit_amount && price.unit_amount / 100, //sempre que for salvar preços salve em centavos pra nao ter problema com float
+      price: price.unit_amount && new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL' 
+      }).format(price.unit_amount / 100), //sempre que for salvar preços salve em centavos pra nao ter problema com float
     } 
   })
 
   return {
     props: {
       products
-    }
+    },
+    revalidate: 60 * 60 * 2, // 2 horas, prazo pra gerar uma nova versão static da pagina.
   } 
 }
 

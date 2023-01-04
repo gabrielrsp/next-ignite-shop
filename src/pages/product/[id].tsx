@@ -1,8 +1,9 @@
-import { GetStaticProps } from "next/types"
+import { GetStaticPaths, GetStaticProps } from "next/types"
 import { stripe } from "../../lib/stripe";
 import Image from 'next/image'
 import { ProductContainer, ImageContainer, ProductDetails } from "../../styles/pages/product"
 import Stripe from "stripe";
+import { useRouter } from "next/router";
 
 interface ProductProps {
   product: {
@@ -15,6 +16,12 @@ interface ProductProps {
 }
 
 export default function Product ({ product }: ProductProps) {
+  const { isFallback } = useRouter()
+
+  if (isFallback) {
+    return <p>Loading...</p>
+  }
+
   return (
     <ProductContainer>
       <ImageContainer>
@@ -37,7 +44,25 @@ export default function Product ({ product }: ProductProps) {
   )
 }
 
-export const getStaticProps: GetStaticProps<any, { id: string }> = async ({ params }) => {
+// SSG com query params dinamico?
+//aqui defino todos os parametros que serão passados no queryParams quando for chamado o getStaticProps
+ export const getStaticPaths: GetStaticPaths = async () => {
+  /* Abordagens:
+    - Ecommerce: adicionar no paths, somente os produtos mais vendidos/acessados
+  */
+
+
+  return {
+    paths: [ //aqui é preciso ser o mais enxuto possível pois sera gerado no momento da build
+      { params: { id: 'prod_N24REfQlB9BwiL' } },
+    ],
+    fallback: true //caso id do produto nao esteja no paths, sera executada a função getStaticProps com o id especifico
+    // para trazer uma tela em branco enquanto nao tem algo pra mostrar passar fallback: 'blocking' o que nao e recomendado
+    // se false, nao carrega nada, ai da 404 
+  }
+ } 
+
+ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({ params }) => {
   const productId = params.id
 
   const product = await stripe.products.retrieve(productId, {
@@ -59,7 +84,7 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({ para
         description: product.description,
       }
     },
-    revalidate: 60 * 60 * 1 // 1 hour
+    revalidate: 60 * 60 * 1 // 1 hour (lembrando que a função getStaticProps executa nesse intervalo e no momento do build pra gerar a versão estática dessa pagina )
   }
 }
 

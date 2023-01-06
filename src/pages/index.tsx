@@ -29,6 +29,8 @@ export default function Home({products}: HomeProps) {
     }
   })
 
+  // o PREFETCH POR PADRÃO É TRUE, E SÓ COM FUNCIONA COM O APP BUILDADO. 
+  // Se for false, o prefetch sera feito somente no hover e nao no carregamento inicial da página
   return (
     <>
       <HomeContainer ref={sliderRef} className="keen-slider" >
@@ -69,6 +71,9 @@ export default function Home({products}: HomeProps) {
   - Até porque páginas estáticas devem ser IGUAIS pra todos os usuários que irão acessá-la
 
   - Se forem informações dinâmicas, pessoais de um usuario, já é preciso do serverSideProps
+
+  OBS: getServerSideProps : Busca informações do servidor somente no carregamento da página. 
+  -> para fazer chamadas de acordo com interações do usuário, é preciso utilizar o api routes
 */
 export const getStaticProps: GetStaticProps = async() => {
   const response = await stripe.products.list({

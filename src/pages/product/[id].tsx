@@ -12,14 +12,19 @@ interface ProductProps {
     imageUrl: string;
     price: string;
     description: string;
+    defaultPriceId: string;
   }
 }
 
 export default function Product ({ product }: ProductProps) {
-  const { isFallback } = useRouter()
+  // const { isFallback } = useRouter()
 
-  if (isFallback) {
-    return <p>Loading...</p>
+  // if (isFallback) {
+  //   return <p>Loading...</p>
+  // }
+
+  function handleBuyProduct() {
+    console.log(product.defaultPriceId)
   }
 
   return (
@@ -34,7 +39,7 @@ export default function Product ({ product }: ProductProps) {
 
         <p>{product.description}</p>
 
-        <button>
+        <button onClick={handleBuyProduct}>
           Comprar agora
         </button>
 
@@ -82,6 +87,7 @@ export default function Product ({ product }: ProductProps) {
           currency: 'BRL' 
         }).format(price.unit_amount / 100), //sempre que for salvar preços salve em centavos pra nao ter problema com float
         description: product.description,
+        defaultPriceId: price.id,
       }
     },
     revalidate: 60 * 60 * 1 // 1 hour (lembrando que a função getStaticProps executa nesse intervalo e no momento do build pra gerar a versão estática dessa pagina )

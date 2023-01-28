@@ -3,6 +3,7 @@
 import { HomeContainer, Product } from "../styles/pages/home";
 import Image from 'next/image'
 import Link from 'next/link'
+import Head from 'next/head'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import { stripe } from "../lib/stripe";
@@ -33,6 +34,10 @@ export default function Home({products}: HomeProps) {
   // Se for false, o prefetch sera feito somente no hover e nao no carregamento inicial da página
   return (
     <>
+      <Head>
+        <title>Home | Ignite Shop</title>
+      </Head>
+
       <HomeContainer ref={sliderRef} className="keen-slider" >
         {
           products.map( product => {
